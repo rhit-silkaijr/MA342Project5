@@ -15,35 +15,60 @@ end
 
 %1D spin config
 
-sizeSigma = 300;
+sizeSigma = 100;
 %sigma = [1 1 -1 1 1 1 1 -1];
-sigma = ones(sizeSigma);
+sigma = ones(sizeSigma,1);
 for i=1:sizeSigma
-    if rand > 0.7
+    randVar = rand;
+    if randVar > 0.6
         sigma(i) = -1;
     end
 end
+sigmaStart = sigma;
 
 numIters = 500;
-reversalProb = .1;
-T = 2;
+reversalProb = .6;
+%T = 1;
+T = linspace(1,4,20);
 A = adjMatrix;
-currEnergy = zeros(numIters+1);
-currEnergy(1) = ESigma(sigma, A);
+currEnergy = zeros(numIters+1,length(T));
 iter = linspace(0,numIters,numIters+1);
-
-for i=1:numIters
-    sigmaEnd = sigma;
-    for j=1:length(sigma)
-        sigmaFlip = sigma;
-        sigmaFlip(j) = sigmaFlip(j)*-1;
-        P = ProbReverse(sigma, sigmaFlip, A, T);
-        if P > reversalProb
-            sigmaEnd(j) = sigma(j)*-1;
+for t=1:length(T)
+    sigma = sigmaStart;
+    currEnergy(1,t) = ESigma(sigma, A);
+    
+    for i=1:numIters
+        sigmaEnd = sigma;
+    
+        reversalCandidates = rand(sizeSigma,1);
+        reversalIndex = [];
+        for k=1:length(sigma)
+            if reversalCandidates(k) > reversalProb
+                reversalIndex = [reversalIndex k];
+            end
         end
+    
+        for k=1:length(reversalIndex)
+            j = reversalIndex(k);
+            sigmaFlip = sigma;
+            sigmaFlip(j) = sigmaFlip(j)*-1;
+            P = ProbReverse(sigma, sigmaFlip, A, t);
+            if P > rand
+                sigmaEnd(j) = sigma(j)*-1;
+            end
+        end
+        sigma = sigmaEnd;
+        currEnergy(i+1,t) = ESigma(sigmaEnd, A);
     end
-    sigma = sigmaEnd;
-    currEnergy(i+1) = ESigma(sigmaEnd, A);
 end
 
-scatter(iter, currEnergy)
+%scatter(iter, currEnergy(:,3)/sizeSigma);
+%xlabel('Simulation iteration (k)');
+%ylabel('Energy per lattice print (E/N)');
+
+ETN = zeros(length(T),1);
+for i=1:length(T)
+    ETN(i) = mean(currEnergy(:,i))/numIters;
+end
+
+scatter(T, ETN);
