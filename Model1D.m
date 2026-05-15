@@ -32,10 +32,12 @@ reversalProb = .6;
 T = linspace(1,4,20);
 A = adjMatrix;
 currEnergy = zeros(numIters+1,length(T));
+currMag = zeros(numIters+1,length(T));
 iter = linspace(0,numIters,numIters+1);
 for t=1:length(T)
     sigma = sigmaStart;
     currEnergy(1,t) = ESigma(sigma, A);
+    currMag(1,t) = sum(sigma);
     
     for i=1:numIters
         sigmaEnd = sigma;
@@ -59,6 +61,7 @@ for t=1:length(T)
         end
         sigma = sigmaEnd;
         currEnergy(i+1,t) = ESigma(sigmaEnd, A);
+        currMag(i+1,t) = sum(sigmaEnd);
     end
 end
 
@@ -67,8 +70,19 @@ end
 %ylabel('Energy per lattice print (E/N)');
 
 ETN = zeros(length(T),1);
+CTN = zeros(length(T),1);
+MTN = zeros(length(T),1);
+CHITN = zeros(length(T),1);
 for i=1:length(T)
-    ETN(i) = mean(currEnergy(:,i))/numIters;
+    ET = currEnergy(:,i);
+    ETN(i) = mean(ET)/numIters;
+    CTN(i) = (mean(ET.^2)-mean(ET)^2)/((i^2)*numIters);
+    MT = abs(currMag(:,i));
+    MTN(i) = mean(MT)/numIters;
+    CHITN(i) = (mean(MT.^2)-mean(MT)^2)/(i*numIters);
 end
 
-scatter(T, ETN);
+%scatter(T, ETN);
+%scatter(T, CTN);
+%scatter(T, MTN);
+%scatter(T, CHITN);
