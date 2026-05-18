@@ -93,6 +93,11 @@ xlabel('Temperature (T)');
 %xlabel('Temperature (T)');
 
 
+
+% Okay. Figure out the lin reg next time.
+%   Initiation vs sample iterates?
+%   Does MATLAB have built in lin reg?
+
 % Now do it for different sizes of sigma
 % and use the results for a lin reg
 nspace = linspace(4,20,17);
