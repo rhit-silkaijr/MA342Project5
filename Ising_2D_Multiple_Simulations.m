@@ -1,16 +1,21 @@
 clc; clear all; close all;
 
-T = linspace(1,4,100);
+T = linspace(1,4,10);
 Et = zeros(length(T),1);
 Mt = zeros(length(T),1);
 Ct = zeros(length(T),1);
 Chit = zeros(length(T),1);
 i = 1;
 k = 1;
-N = 100;
+N = 102; % Include the padded boundary
+
+% Set up initial randomized A
+A = rand(N, N);
+A(A>0.5) = 1;
+A(A<=0.5) = -1;
 
 for t=T
-    [E, M] = Ising_2D_Func(t, N);
+    [E, M, A] = Ising_2D_Func(t, A, i==1, 500);
     Et(i) = mean(E);
     Ct(i) = (mean(E.^2) - mean(E)^2)/(k*t^2);
     Mt(i) = mean(abs(M));

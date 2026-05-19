@@ -1,5 +1,4 @@
-T = linspace(2.15,2.3,10);
-i = 1;
+T = linspace(2.15,2.3,15);
 k = 1;
 N = linspace(4,20,17);
 
@@ -9,13 +8,22 @@ Chi = zeros(17,1);
 
 for n=N
 
+    i = 1;
+
     Et = zeros(length(T),1);
     Mt = zeros(length(T),1);
     Ct = zeros(length(T),1);
     Chit = zeros(length(T),1);
 
+    nPadded = n + 2;
+
+    % Set up initial randomized A
+    A = rand(nPadded, nPadded);
+    A(A>0.5) = 1;
+    A(A<=0.5) = -1;
+
     for t=T
-        [E, m] = Ising_2D_Func(t, n);
+        [E, m, A] = Ising_2D_Func(t, A, i==1, 5000);
         Et(i) = mean(E);
         Ct(i) = (mean(E.^2) - mean(E)^2)/(k*t^2);
         Mt(i) = mean(abs(m));
