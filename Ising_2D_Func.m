@@ -163,5 +163,10 @@ function [Et,Mt,A] = Ising_2D_Func(T, A, sample, num_iters, type)
         % the /2 in here is from 1, it makes the plot look like the one in the textbook 
         % and 2, I think without it we would be double counting the energy between any two neighbors
     end
-end
 
+    % scatter(1:t_max, Et);
+    % ylabel('Energy per lattice point (E/N)');
+    % xlabel('Simulation Iteration (k)');
+    % hold on
+    % xline(200);
+end
