@@ -23,7 +23,7 @@ for n=N
     A(A<=0.5) = -1;
 
     for t=T
-        [E, m, A] = Ising_2D_Func(t, A, i==1, 5000);
+        [E, m, A] = Ising_2D_Func(t, A, i==1, 500, 1);
         Et(i) = mean(E);
         Ct(i) = (mean(E.^2) - mean(E)^2)/(k*t^2);
         Mt(i) = mean(abs(m));
@@ -31,9 +31,11 @@ for n=N
         i = i + 1;
     end
 
-    M(N==n) = mean(Mt);
-    C(N==n) = mean(Ct);
-    Chi(N==n) = mean(Chit);
+    [~, maxT] = max(Ct);
+
+    M(N==n) = Mt(maxT);
+    C(N==n) = Ct(maxT);
+    Chi(N==n) = Chit(maxT);
 
 end
 

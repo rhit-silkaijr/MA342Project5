@@ -1,4 +1,6 @@
-function [Et,Mt,A] = Ising_2D_Func(T, A, sample, num_iters)
+function [Et,Mt,A] = Ising_2D_Func(T, A, sample, num_iters, type)
+    % Type: 1 for square grid, 2 for traingle 3 for hex
+    
     % N = base lattice size, padded boundary included
     N = length(A);
     
@@ -10,8 +12,20 @@ function [Et,Mt,A] = Ising_2D_Func(T, A, sample, num_iters)
     n = 1;
     
     % Neighbor mapping
+
     % square grid
-    neighbors = [-1, 0; 1, 0; 0, 1; 0, -1]; % left, right, up, and down (dx, dy)
+    if type == 1
+        neighbors = [-1, 0; 1, 0; 0, 1; 0, -1]; % left, right, up, and down (dx, dy)
+    end
+    % triangle grid
+    if type == 2
+        neighbors = [-1, 0; 1, 0; -1, 1; 0, 1; 0, -1; 1, -1]; % left, right, up-left, up, down, down-right (dx, dy)
+    end
+    % hex grid
+    if type == 3
+        neighbors1 = [-1, 0; 0, 1; 1, 0]; % left, up, right 
+        neighbors2 = [-1, 0; 0, -1; 1, 0]; % left, down, right
+    end
 
     if sample
 
@@ -38,6 +52,13 @@ function [Et,Mt,A] = Ising_2D_Func(T, A, sample, num_iters)
             % loop through all indices that can change
             for x = 2:N-1
                 for y = 2:N-1
+                    if type == 3
+                        if mod(x,2) == 1
+                            neighbors = neighbors1;
+                        else
+                            neighbors = neighbors2;
+                        end
+                    end
                     if change_mask(y,x) == 1
                         % calculate E from surrounding neighbors (p. 422)
                         E = 0;
@@ -93,6 +114,13 @@ function [Et,Mt,A] = Ising_2D_Func(T, A, sample, num_iters)
         % loop through all indices that can change
         for x = 2:N-1
             for y = 2:N-1
+                if type == 3
+                    if mod(x,2) == 1
+                        neighbors = neighbors1;
+                    else
+                        neighbors = neighbors2;
+                    end
+                end
                 if change_mask(y,x) == 1
                     % calculate E from surrounding neighbors (p. 422)
                     E = 0;
